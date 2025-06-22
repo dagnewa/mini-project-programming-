@@ -1,0 +1,96 @@
+#include <iostream>
+using namespace std;
+
+MYSQL* connectDatabase() {
+    MYSQL* conn = mysql_init(NULL);
+    if (!mysql_real_connect(conn, "localhost", "root", "", "librarydb", 3306, NULL, 0)) {
+        cerr << "MySQL connection failed: " << mysql_error(conn) << endl;
+        exit(1);
+    }
+    return conn;
+}
+void registerStudent() {
+    string name, dept, book;
+    cout << "Enter student name: "; cin >> name;
+    cout << "Enter department: "; cin >> dept;
+    cout << "Enter borrowed book title: "; cin >> book;
+
+    MYSQL* conn = connectDatabase();
+    string query = "INSERT INTO student(name, department, book_title) VALUES('" +
+                   name + "', '" + dept + "', '" + book + "')";
+    if (mysql_query(conn, query.c_str()) == 0) {
+        cout << "Student registered successfully!" << endl;
+    } else {
+        cerr << "Insert failed: " << mysql_error(conn) << endl;
+    }
+    mysql_close(conn);
+}
+
+void updateStudent() {
+    int id;
+    string newBook;
+    cout << "Enter student ID to update: "; cin >> id;
+    cout << "Enter new book title: "; cin >> newBook;
+
+    MYSQL* conn = connectDatabase();
+    string query = "UPDATE student SET book_title='" + newBook + "' WHERE id=" + to_string(id);
+    if (mysql_query(conn, query.c_str()) == 0) {
+        cout << "Student info updated successfully!" << endl;
+    } else {
+        cerr << "Update failed: " << mysql_error(conn) << endl;
+    }
+    mysql_close(conn);
+}
+
+void deleteStudent() {
+    int id;
+    cout << "Enter student ID to delete: "; cin >> id;
+
+    MYSQL* conn = connectDatabase();
+    string query = "DELETE FROM student WHERE id=" + to_string(id);
+    if (mysql_query(conn, query.c_str()) == 0) {
+        cout << "Student deleted successfully!" << endl;
+    } else {
+        cerr << "Delete failed: " << mysql_error(conn) << endl;
+    }
+    mysql_close(conn);
+}
+
+int main()
+{
+    int choice;
+    while(true)
+    {
+        cout<<"*******************************"<<endl;
+        cout<<"=====Haramaya University======="<<endl;
+        cout<<"====College of computing and informatics==="<<endl;
+        cout<<"==Department of Information Technology=="<<endl;
+        cout<<"project   Practice on Structure"<<endl;
+       
+        cout <<"***press 1: Register Student"<<endl;
+        cout <<"***press 2: Update Student Info"<<endl;
+        cout <<"***prsss 3: Delete Student Record"<<endl;
+        cout<<"***press  4: for exit from the system"<<endl;
+        cout<<"***Please enter your choice***"<<endl;
+        cout<<"*******************************"<<endl;
+        cin>>choice;
+        switch(choice)
+        {
+        
+        case 1: registerStudent(); 
+         break;
+        case 2: updateStudent(); 
+         break;
+        case 3: deleteStudent(); 
+         break;
+        case 4:
+            exit(0);
+            break;
+        default:
+            cout<<"wrong choice"<<endl;
+        }
+    }
+    return 0;
+}
+
+
